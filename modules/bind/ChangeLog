@@ -1,0 +1,16 @@
+2012-09-19 - 0.2.4
+* Update README to make the main example more useful.
+* Support $source_base for easy inclusion of multiple zone files as-is.
+
+2012-07-17 - 0.2.3
+* Add support for "include" lines in named.conf.
+
+2012-06-22 - 0.2.2
+* Add support for a few new configuration values in the main template.
+* Require package for files, for the usual parent directory to exist.
+* Minot updates to the README.
+
+2012-04-23 - 0.2.1
+* Clean up the module to match current puppetlabs guidelines.
+* Force hash sorting in the template for puppet 2.7+ compatibility.
+

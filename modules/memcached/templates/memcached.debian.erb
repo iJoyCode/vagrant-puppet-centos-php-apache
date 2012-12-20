@@ -1,0 +1,17 @@
+# This file is managed by puppet!
+# Module: memcached
+
+-d
+
+logfile /var/log/memcached.log
+
+-l 127.0.0.1
+
+-p 11211
+
+-u nobody
+
+-c <%= maxconn %>
+
+-m <%= cachesize %>
+

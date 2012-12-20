@@ -1,0 +1,106 @@
+#!/bin/bash
+#
+#############################################################
+#
+#       File managed by puppet any changes made to this file
+#       will be lost
+#
+# The master version of this file is at
+#       puppet:///modules/memcached/files/memcached.init
+#
+#############################################################
+
+# Init file for memcached
+#
+# Written by Dag Wieërs <dag@wieers.com>
+#
+# chkconfig: - 80 12
+# description: Distributed memory caching daemon
+#
+# processname: memcached
+# config: /etc/sysconfig/memcached
+# config: /etc/memcached.conf
+
+source /etc/rc.d/init.d/functions
+
+### Default variables
+PORT="11211"
+USER="nobody"
+MAXCONN="1024"
+CACHESIZE="64"
+OPTIONS=""
+SYSCONFIG="/etc/sysconfig/memcached"
+
+### Read configuration
+[ -r "$SYSCONFIG" ] && source "$SYSCONFIG"
+
+RETVAL=0
+prog="memcached"
+desc="Distributed memory caching"
+
+logstats() {
+    test -x /usr/bin/nc || return
+    echo `date` >> /var/log/memcached.stats
+    /usr/bin/nc localhost 11211 <<< stats >> /var/log/memcached.stats
+}
+
+start() {
+    echo -n $"Starting $desc ($prog): "
+    daemon $prog -d -p $PORT -u $USER -c $MAXCONN -m $CACHESIZE $OPTIONS
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Shutting down $desc ($prog): "
+    logstats
+    killproc $prog
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog
+    return $RETVAL
+}
+
+restart() {
+    stop
+    start
+}
+
+reload() {
+    echo -n $"Reloading $desc ($prog): "
+    logstats
+    killproc $prog -HUP
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  condrestart)
+    [ -e /var/lock/subsys/$prog ] && restart
+    RETVAL=$?
+    ;;
+  reload)
+    reload
+    ;;
+  status)
+    status $prog
+    RETVAL=$?
+    ;;
+   *)
+    echo $"Usage: $0 {start|stop|restart|condrestart|status}"
+    RETVAL=1
+esac
+
+exit $RETVAL
