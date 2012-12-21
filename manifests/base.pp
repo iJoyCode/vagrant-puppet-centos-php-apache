@@ -11,7 +11,7 @@ host { 'localhost.localdomain':
 # Adding EPEL repo. We'll use later to install Redis class.
 class { 'epel': }
 
-# Bind (DNS) Server to allow resolving all *.vm and *.local addresses to VM.
+# Bind (DNS) Server to allow resolving all *.loc addresses to VM.
 # Note: You should point to the VM as main DNS server on the host machine.
 class { 'bind::server': chroot => false }
 bind::server::conf { '/etc/named.conf':
@@ -19,18 +19,10 @@ bind::server::conf { '/etc/named.conf':
 	allow_query => [ 'any' ],
     forwarders => [ '8.8.8.8', '8.8.4.4' ],
     zones => {
-        'vm.' => [
+        'loc.' => [
             'type master',
             'file "local.vm"',
         ],
-        'local.' => [
-            'type master',
-            'file "local.vm"',
-        ],
-		'lan.' => [
-	         'type master',
-	         'file "local.vm"',
-	    ],
     },
 }
 bind::server::file { 'local.vm':
