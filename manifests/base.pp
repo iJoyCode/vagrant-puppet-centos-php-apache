@@ -155,7 +155,7 @@ php::module { [ 'devel', 'pear', 'mysql', 'mbstring', 'xml', 'gd', 'tidy', 'pecl
 class redis {
     package { "redis":
         ensure => 'latest',
-		require => Yumrepo['epel'],
+	require => Yumrepo['epel'],
     }
     service { "redis":
         enable => true,
@@ -163,3 +163,12 @@ class redis {
     }
 }
 include redis
+
+# Java installation.
+class java {
+    package { "java":
+        ensure => 'latest',
+	require => Yumrepo['epel'],
+    }
+}
+include java
