@@ -164,11 +164,42 @@ class redis {
 }
 include redis
 
-# Java installation.
+# Java
 class java {
-    package { "java":
-        ensure => 'latest',
+    package { 'java-1.6.0-openjdk':
+	require => Yumrepo['epel'],
+    }
+    package { 'java-1.6.0-openjdk-devel':
 	require => Yumrepo['epel'],
     }
 }
 include java
+
+# PHPUnit
+exec { '/usr/bin/pear upgrade pear':
+    require => Package['php-pear'],
+}
+
+define discoverPearChannel {
+    exec { "/usr/bin/pear channel-discover $name":
+        onlyif => "/usr/bin/pear channel-info $name | grep \"Unknown channel\"",
+        require => Exec['/usr/bin/pear upgrade pear'],
+    }
+}
+discoverPearChannel { 'pear.phpunit.de': }
+discoverPearChannel { 'components.ez.no': }
+discoverPearChannel { 'pear.symfony-project.com': }
+discoverPearChannel { 'pear.symfony.com': }
+
+exec { '/usr/bin/pear install --alldeps pear.phpunit.de/PHPUnit':
+    onlyif => "/usr/bin/pear info phpunit/PHPUnit | grep \"No information found\"",
+    require => [
+        Exec['/usr/bin/pear upgrade pear'],
+        DiscoverPearChannel['pear.phpunit.de'],
+        DiscoverPearChannel['components.ez.no'],
+        DiscoverPearChannel['pear.symfony-project.com'],
+        DiscoverPearChannel['pear.symfony.com']
+    ],
+    user => 'root',
+    timeout => 0
+}
