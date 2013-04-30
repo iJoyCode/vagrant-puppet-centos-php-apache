@@ -4,7 +4,7 @@
 Vagrant::Config.run do |config|
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "centos-6.3-64"
+  config.vm.box = "centos-6.4-64"
   config.vm.box_url = "https://dl.dropbox.com/u/7225008/Vagrant/CentOS-6.3-x86_64-minimal.box"
 
   # Boot with a GUI so you can see the screen. (Default is headless)

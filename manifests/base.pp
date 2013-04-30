@@ -149,13 +149,23 @@ php::ini {
 }
 include php::cli
 include php::mod_php5
-php::module { [ 'devel', 'pear', 'mysql', 'mbstring', 'xml', 'gd', 'tidy', 'pecl-apc', 'pecl-memcache', 'pecl-imagick']: }
+php::module { [ 'devel', 'pear', 'mysql', 'mbstring', 'xml', 'gd', 'tidy', 'pecl-apc', 'pecl-memcache', 'pecl-imagick', 'pecl', 'pecl-xdebug']: }
+php::zend::ini { 'pecl-xdebug':
+    settings => {
+        'xdebug.remote_enable'      => 'on',
+        'xdebug.remote_handler' => 'dbgp',
+        'xdebug.remote_port'     => '9000',
+        'xdebug.remote_port'     => '9000',
+        'xdebug.remote_connect_back'     => 'on',
+    },
+    module_path => '/usr/lib64/php/modules/xdebug.so'
+}
 
 # Redis installation.
 class redis {
     package { "redis":
         ensure => 'latest',
-	require => Yumrepo['epel'],
+	    require => Yumrepo['epel'],
     }
     service { "redis":
         enable => true,
