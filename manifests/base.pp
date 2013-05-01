@@ -157,6 +157,7 @@ php::zend::ini { 'pecl-xdebug':
         'xdebug.remote_port'     => '9000',
         'xdebug.remote_port'     => '9000',
         'xdebug.remote_connect_back'     => 'on',
+		'xdebug.max_nesting_level'     => '250',
     },
     module_path => '/usr/lib64/php/modules/xdebug.so'
 }
