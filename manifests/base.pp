@@ -33,7 +33,7 @@ bind::server::file { 'local.vm':
 class { "memcached": memcached_port => '11211', maxconn => '2048', cachesize => '12', }
 
 # Miscellaneous packages.
-$misc_packages = ['vim-enhanced','telnet','zip','unzip','git']
+$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','htop','nodejs','npm']
 package { $misc_packages: ensure => latest }
 class { "ntp": autoupdate => true }
 
