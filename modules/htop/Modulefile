@@ -1,0 +1,7 @@
+name    'discovery-htop'
+version '0.0.1'
+author 'Discovery Communications, Inc.'
+license 'Apache License, Version 2.0'
+summary 'Installs htop'
+description 'Installs htop'
+project_page 'https://github.com/discovery/puppet-htop'

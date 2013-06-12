@@ -15,9 +15,10 @@ class { 'epel': }
 class { "memcached": memcached_port => '11211', maxconn => '2048', cachesize => '12', }
 
 # Miscellaneous packages.
-$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','htop','nodejs','npm']
+$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','nodejs','npm']
 package { $misc_packages: ensure => latest }
 class { "ntp": autoupdate => true }
+class { 'htop': }
 
 # Iptables (Firewall) package and rules to allow ssh, http, https and dns services.
 class iptables {
