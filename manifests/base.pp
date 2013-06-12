@@ -11,24 +11,6 @@ host { 'localhost.localdomain':
 # Adding EPEL repo. We'll use later to install Redis class.
 class { 'epel': }
 
-# Bind (DNS) Server to allow resolving all *.loc addresses to VM.
-# Note: You should point to the VM as main DNS server on the host machine.
-class { 'bind::server': chroot => false }
-bind::server::conf { '/etc/named.conf':
-	listen_on_addr => [ 'any' ],
-	allow_query => [ 'any' ],
-    forwarders => [ '8.8.8.8', '8.8.4.4' ],
-    zones => {
-        'loc.' => [
-            'type master',
-            'file "local.vm"',
-        ],
-    },
-}
-bind::server::file { 'local.vm':
-    source  => '/vagrant/files/bind.txt',
-}
-
 # Memcached server (12MB)
 class { "memcached": memcached_port => '11211', maxconn => '2048', cachesize => '12', }
 
