@@ -215,3 +215,17 @@ exec { '/usr/bin/pear install --alldeps pear.phpunit.de/PHPUnit':
     user => 'root',
     timeout => 0
 }
+
+# Grunt.js install
+exec { '/usr/bin/npm i -g grunt-cli':
+    require => Package['npm'],
+    timeout => 0,
+    user => 'root',
+}
+
+# Nodemon install
+exec { '/usr/bin/npm i -g nodemon':
+    require => Package['npm'],
+    timeout => 0,
+    user => 'root',
+}
