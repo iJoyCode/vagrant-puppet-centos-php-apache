@@ -15,7 +15,7 @@ class { 'epel': }
 class { "memcached": memcached_port => '11211', maxconn => '2048', cachesize => '12', }
 
 # Miscellaneous packages.
-$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','nodejs','npm']
+$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','nodejs','npm','upstart']
 package { $misc_packages: ensure => latest }
 class { "ntp": autoupdate => true }
 class { 'htop': }
