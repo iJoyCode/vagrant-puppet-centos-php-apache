@@ -1,3 +1,53 @@
+2013-08-01 Release 2.4.1
+========================
+
+Summary
+-------
+
+This minor bugfix release solves an idempotency issue when using plain text
+passwords for the password_hash parameter for the postgresql::role defined
+type. Without this, users would continually see resource changes everytime
+your run Puppet.
+
+Bugfixes
+---------
+- Alter role call not idempotent with cleartext passwords (Ken Barber)
+
+2013-07-19 Release 2.4.0
+========================
+
+Summary
+-------
+This updates adds the ability to change permissions on tables, create template
+databases from normal databases, manage PL-Perl's postgres package, and
+disable the management of `pg_hba.conf`.
+
+Features
+--------
+- Add `postgresql::table_grant` defined resource
+- Add `postgresql::plperl` class
+- Add `manage_pg_hba_conf` parameter to the `postgresql::config` class
+- Add `istemplate` parameter to the `postgresql::database` define
+
+Bugfixes
+--------
+- Update `postgresql::role` class to be able to update roles when modified
+instead of only on creation.
+- Update tests
+- Fix documentation of `postgresql::database_grant`
+
+2.3.0
+=====
+
+This feature release includes the following changes:
+
+* Add a new parameter `owner` to the `database` type.  This can be used to
+  grant ownership of a new database to a specific user.  (Bruno Harbulot)
+* Add support for operating systems other than Debian/RedHat, as long as the
+  user supplies custom values for all of the required paths, package names, etc.
+  (Chris Price)
+* Improved integration testing (Ken Barber)
+
 2.2.1
 =====
 
