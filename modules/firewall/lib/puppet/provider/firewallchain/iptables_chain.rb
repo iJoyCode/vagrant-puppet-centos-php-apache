@@ -1,16 +1,18 @@
 Puppet::Type.type(:firewallchain).provide :iptables_chain do
+  include Puppet::Util::Firewall
+
   @doc = "Iptables chain provider"
 
   has_feature :iptables_chain
   has_feature :policy
 
   optional_commands({
-    :iptables       => '/sbin/iptables',
-    :iptables_save  => '/sbin/iptables-save',
-    :ip6tables      => '/sbin/ip6tables',
-    :ip6tables_save => '/sbin/ip6tables-save',
-    :ebtables       => '/sbin/ebtables',
-    :ebtables_save  => '/sbin/ebtables-save',
+    :iptables       => 'iptables',
+    :iptables_save  => 'iptables-save',
+    :ip6tables      => 'ip6tables',
+    :ip6tables_save => 'ip6tables-save',
+    :ebtables       => 'ebtables',
+    :ebtables_save  => 'ebtables-save',
   })
 
   defaultfor :kernel => :linux
@@ -96,6 +98,7 @@ Puppet::Type.type(:firewallchain).provide :iptables_chain do
 
   def flush
     debug("[flush]")
+    persist_iptables(@resource[:name].match(Nameformat)[3])
     # Clear the property hash so we re-initialize with updated values
     @property_hash.clear
   end

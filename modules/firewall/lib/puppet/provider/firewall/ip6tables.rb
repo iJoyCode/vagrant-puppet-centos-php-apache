@@ -16,8 +16,20 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
   has_feature :tcp_flags
   has_feature :pkttype
 
-  commands :iptables      => '/sbin/ip6tables'
-  commands :iptables_save => '/sbin/ip6tables-save'
+  optional_commands({
+    :ip6tables      => 'ip6tables',
+    :ip6tables_save => 'ip6tables-save',
+  })
+
+  def self.iptables(*args)
+    ip6tables(*args)
+  end
+
+  def self.iptables_save(*args)
+    ip6tables_save(*args)
+  end
+
+  @protocol = "IPv6"
 
   @resource_map = {
     :burst => "--limit-burst",
@@ -45,6 +57,17 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :uid => "-m owner --uid-owner",
     :pkttype => "-m pkttype --pkt-type"
   }
+
+  # Create property methods dynamically
+  (@resource_map.keys << :chain << :table << :action).each do |property|
+    define_method "#{property}" do
+      @property_hash[property.to_sym]
+    end
+
+    define_method "#{property}=" do |value|
+      @property_hash[:needs_change] = true
+    end
+  end
 
   # This is the order of resources as they appear in iptables-save output,
   # we need it to properly parse and apply rules, if the order of resource

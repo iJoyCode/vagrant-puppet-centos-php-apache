@@ -16,9 +16,16 @@ Puppet::Type.newtype(:firewall) do
     This type provides the capability to manage firewall rules within
     puppet.
 
-    **Autorequires:** If Puppet is managing the iptables or ip6tables chains
-    specified in the `chain` or `jump` parameters, the firewall resource
-    will autorequire those firewallchain resources.
+    **Autorequires:**
+
+    If Puppet is managing the iptables or ip6tables chains specified in the
+    `chain` or `jump` parameters, the firewall resource will autorequire
+    those firewallchain resources.
+
+    If Puppet is managing the iptables or iptables-persistent packages, and
+    the provider is iptables or ip6tables, the firewall resource will
+    autorequire those packages to ensure that any required binaries are
+    installed.
   EOS
 
   feature :rate_limiting, "Rate limiting features."
@@ -34,6 +41,10 @@ Puppet::Type.newtype(:firewall) do
   feature :mark, "Set the netfilter mark value associated with the packet"
   feature :tcp_flags, "The ability to match on particular TCP flag settings"
   feature :pkttype, "Match a packet type"
+  feature :socket, "Match open sockets"
+  feature :isfragment, "Match fragments"
+  feature :address_type, "The ability match on source or destination address type"
+  feature :iprange, "The ability match on source or destination IP range "
 
   # provider specific features
   feature :iptables, "The provider provides iptables features."
@@ -88,7 +99,7 @@ Puppet::Type.newtype(:firewall) do
   # Generic matching properties
   newproperty(:source) do
     desc <<-EOS
-      An array of source addresses. For example:
+      The source address. For example:
 
           source => '192.168.2.0/24'
 
@@ -96,13 +107,30 @@ Puppet::Type.newtype(:firewall) do
     EOS
 
     munge do |value|
-      @resource.host_to_ip(value)
+      begin
+        @resource.host_to_ip(value)
+      rescue Exception => e
+        self.fail("host_to_ip failed for #{value}, exception #{e}")
+      end
     end
+  end
+
+  # Source IP range
+  newproperty(:src_range, :required_features => :iprange) do
+    desc <<-EOS
+      The source IP range. For example:
+
+          src_range => '192.168.1.1-192.168.1.10'
+
+      The source IP range is must in 'IP1-IP2' format.
+    EOS
+
+    newvalues(/^((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)-((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)/)
   end
 
   newproperty(:destination) do
     desc <<-EOS
-      An array of destination addresses to match. For example:
+      The destination address to match. For example:
 
           destination => '192.168.1.0/24'
 
@@ -110,8 +138,25 @@ Puppet::Type.newtype(:firewall) do
     EOS
 
     munge do |value|
-      @resource.host_to_ip(value)
+      begin
+        @resource.host_to_ip(value)
+      rescue Exception => e
+        self.fail("host_to_ip failed for #{value}, exception #{e}")
+      end
     end
+  end
+
+  # Destination IP range
+  newproperty(:dst_range, :required_features => :iprange) do
+    desc <<-EOS
+      The destination IP range. For example:
+
+          dst_range => '192.168.1.1-192.168.1.10'
+
+      The destination IP range is must in 'IP1-IP2' format.
+    EOS
+
+    newvalues(/^((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)-((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)/)
   end
 
   newproperty(:sport, :array_matching => :all) do
@@ -202,6 +247,58 @@ Puppet::Type.newtype(:firewall) do
       value = [value] unless value.is_a?(Array)
       value.join(',')
     end
+  end
+
+  newproperty(:dst_type, :required_features => :address_type) do
+    desc <<-EOS
+      The destination address type. For example:
+
+          dst_type => 'LOCAL'
+
+      Can be one of:
+
+      * UNSPEC - an unspecified address
+      * UNICAST - a unicast address
+      * LOCAL - a local address
+      * BROADCAST - a broadcast address
+      * ANYCAST - an anycast packet
+      * MULTICAST - a multicast address
+      * BLACKHOLE - a blackhole address
+      * UNREACHABLE - an unreachable address
+      * PROHIBIT - a prohibited address
+      * THROW - undocumented
+      * NAT - undocumented
+      * XRESOLVE - undocumented
+    EOS
+
+    newvalues(:UNSPEC, :UNICAST, :LOCAL, :BROADCAST, :ANYCAST, :MULTICAST,
+              :BLACKHOLE, :UNREACHABLE, :PROHIBIT, :THROW, :NAT, :XRESOLVE)
+  end
+
+  newproperty(:src_type, :required_features => :address_type) do
+    desc <<-EOS
+      The source address type. For example:
+
+          src_type => 'LOCAL'
+
+      Can be one of:
+
+      * UNSPEC - an unspecified address
+      * UNICAST - a unicast address
+      * LOCAL - a local address
+      * BROADCAST - a broadcast address
+      * ANYCAST - an anycast packet
+      * MULTICAST - a multicast address
+      * BLACKHOLE - a blackhole address
+      * UNREACHABLE - an unreachable address
+      * PROHIBIT - a prohibited address
+      * THROW - undocumented
+      * NAT - undocumented
+      * XRESOLVE - undocumented
+    EOS
+
+    newvalues(:UNSPEC, :UNICAST, :LOCAL, :BROADCAST, :ANYCAST, :MULTICAST,
+              :BLACKHOLE, :UNREACHABLE, :PROHIBIT, :THROW, :NAT, :XRESOLVE)
   end
 
   newproperty(:proto) do
@@ -535,6 +632,23 @@ Puppet::Type.newtype(:firewall) do
     newvalues(:unicast, :broadcast, :multicast)
   end
 
+  newproperty(:isfragment, :required_features => :isfragment) do
+    desc <<-EOS
+      Set to true to match tcp fragments (requires type to be set to tcp)
+    EOS
+
+    newvalues(:true, :false)
+  end
+
+  newproperty(:socket, :required_features => :socket) do
+    desc <<-EOS
+      If true, matches if an open socket can be found by doing a coket lookup
+      on the packet.
+    EOS
+
+    newvalues(:true, :false)
+  end
+
   newparam(:line) do
     desc <<-EOS
       Read-only property for caching the rule line.
@@ -542,21 +656,34 @@ Puppet::Type.newtype(:firewall) do
   end
 
   autorequire(:firewallchain) do
+    reqs = []
+    protocol = nil
+
     case value(:provider)
     when :iptables
       protocol = "IPv4"
     when :ip6tables
       protocol = "IPv6"
-    else
-      return
     end
 
-    reqs = []
-    [value(:chain), value(:jump)].each do |chain|
-      reqs << "#{chain}:#{value(:table)}:#{protocol}" unless chain.nil?
+    unless protocol.nil?
+      [value(:chain), value(:jump)].each do |chain|
+        reqs << "#{chain}:#{value(:table)}:#{protocol}" unless chain.nil?
+      end
     end
 
     reqs
+  end
+
+  # Classes would be a better abstraction, pending:
+  # http://projects.puppetlabs.com/issues/19001
+  autorequire(:package) do
+    case value(:provider)
+    when :iptables, :ip6tables
+      %w{iptables iptables-persistent}
+    else
+      []
+    end
   end
 
   validate do

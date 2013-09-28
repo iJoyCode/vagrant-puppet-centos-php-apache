@@ -3,9 +3,9 @@ require 'spec_helper'
 describe 'Puppet::Util::Firewall' do
   let(:resource) {
     type = Puppet::Type.type(:firewall)
-    provider = stub 'provider'
-    provider.stubs(:name).returns(:iptables)
-    Puppet::Type::Firewall.stubs(:defaultprovider).returns(provider)
+    provider = double 'provider'
+    allow(provider).to receive(:name).and_return(:iptables)
+    allow(Puppet::Type::Firewall).to receive(:defaultprovider).and_return(provider)
     type.new({:name => '000 test foo'})
   }
 
@@ -13,7 +13,10 @@ describe 'Puppet::Util::Firewall' do
 
   describe '#host_to_ip' do
     subject { resource }
-    specify { subject.host_to_ip('puppetlabs.com').should == '96.126.112.51/32' }
+    specify {
+      expect(Resolv).to receive(:getaddress).with('puppetlabs.com').and_return('96.126.112.51')
+      subject.host_to_ip('puppetlabs.com').should == '96.126.112.51/32'
+    }
     specify { subject.host_to_ip('96.126.112.51').should == '96.126.112.51/32' }
     specify { subject.host_to_ip('96.126.112.51/32').should == '96.126.112.51/32' }
     specify { subject.host_to_ip('2001:db8:85a3:0:0:8a2e:370:7334').should == '2001:db8:85a3::8a2e:370:7334/128' }
@@ -28,8 +31,8 @@ describe 'Puppet::Util::Firewall' do
 
       %w{inet5 inet8 foo}.each do |proto|
         it "should reject invalid proto #{proto}" do
-          expect { subject.icmp_name_to_number('echo-reply', proto) }.should
-            raise_error(ArgumentError, "unsupported protocol family '#{proto}'")
+          expect { subject.icmp_name_to_number('echo-reply', proto) }.
+            to raise_error(ArgumentError, "unsupported protocol family '#{proto}'")
         end
       end
     end
@@ -83,5 +86,80 @@ describe 'Puppet::Util::Firewall' do
     specify { subject.to_hex32('4294967296').should == nil }
     specify { subject.to_hex32('-1').should == nil }
     specify { subject.to_hex32('bananas').should == nil }
+  end
+
+  describe '#persist_iptables' do
+    before { Facter.clear }
+    subject { resource }
+
+    describe 'when proto is IPv4' do
+      let(:proto) { 'IPv4' }
+
+      it 'should exec for RedHat identified from osfamily' do
+        allow(Facter.fact(:osfamily)).to receive(:value).and_return('RedHat')
+        allow(Facter.fact(:operatingsystem)).to receive(:value).and_return('RedHat')
+
+        expect(subject).to receive(:execute).with(%w{/sbin/service iptables save})
+        subject.persist_iptables(proto)
+      end
+
+      it 'should exec for systemd if running Fedora 15 or greater' do
+        allow(Facter.fact(:osfamily)).to receive(:value).and_return('RedHat')
+        allow(Facter.fact(:operatingsystem)).to receive(:value).and_return('Fedora')
+        allow(Facter.fact(:operatingsystemrelease)).to receive(:value).and_return('15')
+
+        expect(subject).to receive(:execute).with(%w{/usr/libexec/iptables.init save})
+        subject.persist_iptables(proto)
+      end
+
+      it 'should exec for CentOS identified from operatingsystem' do
+        allow(Facter.fact(:osfamily)).to receive(:value).and_return(nil)
+        allow(Facter.fact(:operatingsystem)).to receive(:value).and_return('CentOS')
+        expect(subject).to receive(:execute).with(%w{/sbin/service iptables save})
+        subject.persist_iptables(proto)
+      end
+
+      it 'should exec for Archlinux identified from osfamily' do
+        allow(Facter.fact(:osfamily)).to receive(:value).and_return('Archlinux')
+        expect(subject).to receive(:execute).with(['/bin/sh', '-c', '/usr/sbin/iptables-save > /etc/iptables/iptables.rules'])
+        subject.persist_iptables(proto)
+      end
+
+      it 'should raise a warning when exec fails' do
+        allow(Facter.fact(:osfamily)).to receive(:value).and_return('RedHat')
+        allow(Facter.fact(:operatingsystem)).to receive(:value).and_return('RedHat')
+
+        expect(subject).to receive(:execute).with(%w{/sbin/service iptables save}).
+          and_raise(Puppet::ExecutionFailure, 'some error')
+        expect(subject).to receive(:warning).with('Unable to persist firewall rules: some error')
+        subject.persist_iptables(proto)
+      end
+    end
+
+    describe 'when proto is IPv6' do
+      let(:proto) { 'IPv6' }
+
+      it 'should exec for newer Ubuntu' do
+        allow(Facter.fact(:osfamily)).to receive(:value).and_return(nil)
+        allow(Facter.fact(:operatingsystem)).to receive(:value).and_return('Ubuntu')
+        allow(Facter.fact(:iptables_persistent_version)).to receive(:value).and_return('0.5.3ubuntu2')
+        expect(subject).to receive(:execute).with(%w{/usr/sbin/service iptables-persistent save})
+        subject.persist_iptables(proto)
+      end
+
+      it 'should not exec for older Ubuntu which does not support IPv6' do
+        allow(Facter.fact(:osfamily)).to receive(:value).and_return(nil)
+        allow(Facter.fact(:operatingsystem)).to receive(:value).and_return('Ubuntu')
+        allow(Facter.fact(:iptables_persistent_version)).to receive(:value).and_return('0.0.20090701')
+        expect(subject).to receive(:execute).never
+        subject.persist_iptables(proto)
+      end
+
+      it 'should not exec for Suse which is not supported' do
+        allow(Facter.fact(:osfamily)).to receive(:value).and_return('Suse')
+        expect(subject).to receive(:execute).never
+        subject.persist_iptables(proto)
+      end
+    end
   end
 end

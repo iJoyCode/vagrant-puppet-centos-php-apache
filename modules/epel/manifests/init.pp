@@ -73,9 +73,16 @@ class epel inherits epel::params {
       descr          => "Extra Packages for Enterprise Linux ${::os_maj_version} - ${::architecture} - Source"
     }
 
-    yumrepo { "remi-test":
+    yumrepo { "remi":
       baseurl	=> "http://rpms.famillecollet.com/enterprise/${::os_maj_version}/remi/${::architecture}/",
       descr 	=> "Remi PHP repository",
+      enabled 	=> 1,
+      gpgcheck 	=> 0,
+    }
+	
+	yumrepo { "remi-test":
+      baseurl	=> "http://rpms.famillecollet.com/enterprise/${::os_maj_version}/test/${::architecture}/",
+      descr 	=> "Remi Test PHP repository",
       enabled 	=> 1,
       gpgcheck 	=> 0,
     }
