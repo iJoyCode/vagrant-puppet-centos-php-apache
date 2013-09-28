@@ -1,7 +1,7 @@
 class phpmyadmin::centos inherits phpmyadmin::base {
     Package[phpmyadmin]{
         name => 'phpMyAdmin',
-        require +> Package[php-mysql],
+        require => Package[php],
     }
 
     File[phpmyadmin_config]{
