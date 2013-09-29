@@ -5,7 +5,7 @@ Vagrant::Config.run do |config|
 
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "centos-6.4-64"
-  config.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20130731.box"
+  config.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20130427.box"
 
   # Boot with a GUI so you can see the screen. (Default is headless)
   #config.vm.boot_mode = :gui
@@ -32,8 +32,8 @@ Vagrant::Config.run do |config|
   # Share an additional folder to the guest VM. The first argument is
   # an identifier, the second is the path on the guest to mount the
   # folder, and the third is the path on the host to the actual folder.
-  config.vm.share_folder "v-www", 	"/www",		"./shared/www", 	:extra => 'dmode=777,fmode=777'
-  config.vm.share_folder "v-logs", 	"/logs",	"./shared/logs",	:extra => 'dmode=777,fmode=777'
+  config.vm.share_folder "v-www", 	"/www",		"./shared/www", 	:mount_options => ["dmode=777", "fmode=777"]
+  config.vm.share_folder "v-logs", 	"/logs",	"./shared/logs",	:mount_options => ["dmode=777", "fmode=777"]
 
   config.vm.provision :puppet,
     :options => ["--fileserverconfig=fileserver.conf"],
@@ -42,5 +42,4 @@ Vagrant::Config.run do |config|
        puppet.manifest_file = "base.pp"
        puppet.module_path = "modules"
   end
-
 end

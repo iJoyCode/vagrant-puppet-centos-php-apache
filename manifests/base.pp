@@ -15,36 +15,10 @@ class { 'epel': }
 class { "memcached": memcached_port => '11211', maxconn => '2048', cachesize => '12', }
 
 # Miscellaneous packages.
-$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','nodejs','npm','upstart']
+$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','upstart']
 package { $misc_packages: ensure => latest }
 class { "ntp": autoupdate => true }
 class { 'htop': }
-
-# Iptables (Firewall) package and rules to allow ssh, http, https and dns services.
-class iptables {
-	package { "iptables":
-		ensure => present
-	}
-
-	service { "iptables":
-		require => Package["iptables"],
-		hasstatus => true,
-		status => "true",
-		hasrestart => false,
-	}
-
-	file { "/etc/sysconfig/iptables":
-		owner   => "root",
-		group   => "root",
-		mode    => 600,
-		replace => true,
-		ensure  => present,
-		source  => "/vagrant/files/iptables.txt",
-		require => Package["iptables"],
-		notify  => Service["iptables"],
-	}
-}
-class { 'iptables': }
 
 class { 'apache':
 	sendfile		=> 'off'
@@ -216,16 +190,13 @@ exec { '/usr/bin/pear install --alldeps pear.phpunit.de/PHPUnit':
     timeout => 0
 }
 
-# Grunt.js install
-exec { '/usr/bin/npm i -g grunt-cli':
-    require => Package['npm'],
-    timeout => 0,
-    user => 'root',
+include nodejs
+package { 'nodemon':
+  ensure   => latest,
+  provider => 'npm',
 }
 
-# Nodemon install
-exec { '/usr/bin/npm i -g nodemon':
-    require => Package['npm'],
-    timeout => 0,
-    user => 'root',
+package { 'grunt-cli':
+  ensure   => latest,
+  provider => 'npm',
 }
