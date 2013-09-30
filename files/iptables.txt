@@ -1,5 +1,3 @@
-# Firewall configuration created and managed by puppet
-# Do not edit manually
 *filter
 :INPUT ACCEPT [0:0]
 :FORWARD ACCEPT [0:0]
