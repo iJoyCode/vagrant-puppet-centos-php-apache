@@ -14,7 +14,6 @@ Installed:
 - openjdk
 - PHPUnit
 - Memcache
-- Bind
 - PostgreSQL
 - Node.js (npm, nodemon, grunt.js)
 - other (git, zip, telnet ...)

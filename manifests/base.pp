@@ -217,14 +217,13 @@ exec { '/usr/bin/pear install --alldeps pear.phpunit.de/PHPUnit':
 }
 
 include nodejs
-package { 'grunt-cli':
-  ensure   => latest,
-  provider => 'npm',
-  require => Package['npm']
+package {'grunt-cli':
+    ensure   => present,
+    provider => 'npm',
+    require  => Package['npm'],
 }
-
-package { 'nodemon':
-  ensure   => latest,
-  provider => 'npm',
-  require => Package['npm']
+package {'nodemon':
+    ensure   => present,
+    provider => 'npm',
+    require  => Package['npm'],
 }
