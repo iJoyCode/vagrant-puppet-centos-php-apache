@@ -81,8 +81,8 @@ class epel inherits epel::params {
     }
 	
 	yumrepo { "remi-test":
-      baseurl	=> "http://rpms.famillecollet.com/enterprise/${::os_maj_version}/test/${::architecture}/",
-      descr 	=> "Remi Test PHP repository",
+      baseurl	=> "http://rpms.famillecollet.com/enterprise/${::os_maj_version}/php55/${::architecture}/",
+      descr 	=> "Remi PHP 5.5 repository",
       enabled 	=> 1,
       gpgcheck 	=> 0,
     }
