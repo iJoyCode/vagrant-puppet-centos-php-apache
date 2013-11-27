@@ -150,7 +150,7 @@ php::ini {
 }
 include php::cli
 include php::mod_php5
-php::module { [ 'devel', 'pear', 'pgsql', 'mbstring', 'xml', 'gd', 'tidy', 'pecl-memcache', 'pecl-imagick', 'pecl-xdebug', 'pecl-redis']: }
+php::module { [ 'devel', 'pear', 'pgsql', 'mbstring', 'xml', 'gd', 'opcache', 'tidy', 'pecl-memcache', 'pecl-imagick', 'pecl-xdebug', 'pecl-redis']: }
 php::zend::ini { 'pecl-xdebug':
     settings => {
         'xdebug.remote_enable'      => 'on',
