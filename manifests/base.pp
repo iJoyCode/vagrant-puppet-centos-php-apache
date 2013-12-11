@@ -15,7 +15,7 @@ class { 'epel': }
 class { "memcached": memcached_port => '11211', maxconn => '2048', cachesize => '12', }
 
 # Miscellaneous packages.
-$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','upstart']
+$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','upstart','rabbitmq-server']
 package { $misc_packages: ensure => latest }
 class { "ntp": autoupdate => true }
 class { 'htop': }
@@ -150,7 +150,7 @@ php::ini {
 }
 include php::cli
 include php::mod_php5
-php::module { [ 'devel', 'pear', 'pgsql', 'mbstring', 'xml', 'gd', 'opcache', 'tidy', 'pecl-memcache', 'pecl-imagick', 'pecl-xdebug', 'pecl-redis']: }
+php::module { [ 'devel', 'pear', 'pgsql', 'mbstring', 'xml', 'gd', 'opcache', 'tidy', 'pecl-memcache', 'pecl-imagick', 'pecl-xdebug', 'pecl-redis', 'pecl-amqp']: }
 php::zend::ini { 'pecl-xdebug':
     settings => {
         'xdebug.remote_enable'      => 'on',
