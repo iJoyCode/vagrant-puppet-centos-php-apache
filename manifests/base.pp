@@ -20,6 +20,11 @@ package { $misc_packages: ensure => latest }
 class { "ntp": autoupdate => true }
 class { 'htop': }
 
+service { "rabbitmq-server":
+	require => Package["rabbitmq-server"],
+	enable => true,
+}
+
 # Iptables (Firewall) package and rules to allow ssh, http, https and dns services.
 class iptables {
 	package { "iptables":
