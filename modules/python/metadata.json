@@ -1,0 +1,38 @@
+{
+  "name": "stankevich-python",
+  "version": "1.6.3",
+  "source": "git://github.com/stankevich/puppet-python",
+  "author": "Sergey Stankevich",
+  "license": "Apache License, Version 2.0",
+  "summary": "Puppet module for Python",
+  "description": "Installs and manages Python, pip, virtualenv, Gunicorn virtual hosts.",
+  "project_page": "https://github.com/stankevich/puppet-python",
+  "dependencies": [
+
+  ],
+  "types": [
+
+  ],
+  "checksums": {
+    "LICENSE.md": "7e73614426b4f6e7b6063c90c199fdae",
+    "Modulefile": "50e23bc21323b247dd9e884e9a196201",
+    "README.md": "daf35a047765fdd0cf91ddf0cc7218ed",
+    "Rakefile": "8e90761618737068e0560920b6b2b5a7",
+    "lib/facter/pip_version.rb": "13cc0e74c84fc9c12b8169c205798b07",
+    "lib/facter/python_version.rb": "2e2e4d712d38e857bcdd0f259679eeb8",
+    "lib/facter/virtualenv_version.rb": "b151c921e1597d5bb46214302f30b4f5",
+    "manifests/config.pp": "a72d1e311d424d0d954613db17aec027",
+    "manifests/gunicorn.pp": "22244912eebb55f748ad35fd9c693d88",
+    "manifests/init.pp": "1898b1ddca9f489b69cb57342569abac",
+    "manifests/install.pp": "96859ffba471a3c729d0eeea69ca5095",
+    "manifests/pip.pp": "9d6863e0b748dec92ae75c33c73a7508",
+    "manifests/requirements.pp": "0acd9d90e0a8e7c2c42a9b616501b19f",
+    "manifests/virtualenv.pp": "1e558942b48477796d38ef5e1d9cdce7",
+    "templates/gunicorn.erb": "4d2639e34be9422fd79f01f46e3e9c4a",
+    "tests/gunicorn.pp": "ff0a894efdce0b7a51b64d884616c128",
+    "tests/init.pp": "251c210b05aab1f84c49a38f7fe48bbe",
+    "tests/pip.pp": "e3a793d4c714c39df31f3f79f0d7629c",
+    "tests/requirements.pp": "779b5cd2e6a8c35a73265a974c0a7e6b",
+    "tests/virtualenv.pp": "698f811b9110cbc5d9262f0500bd7ee4"
+  }
+}

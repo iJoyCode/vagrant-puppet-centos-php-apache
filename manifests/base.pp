@@ -12,13 +12,30 @@ host { 'localhost.localdomain':
 class { 'epel': }
 
 # Memcached server (12MB)
-class { "memcached": memcached_port => '11211', maxconn => '2048', cachesize => '12', }
+class { "memcached": memcached_port => '11211', maxconn => '2048', cachesize => '12' }
 
 # Miscellaneous packages.
-$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','upstart','rabbitmq-server']
+$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','upstart','libxml2-devel','libxslt-devel']
 package { $misc_packages: ensure => latest }
 class { "ntp": autoupdate => true }
 class { 'htop': }
+
+class { 'python':
+  version    => 'system',
+  virtualenv => false,
+  dev        => true,
+  pip 	=> true
+}
+
+python::pip { 'lxml':
+  owner         => 'root',
+}
+
+python::pip { 'MySQL-python':
+  owner         => 'root',
+}
+
+class { 'phantomjs': }
 
 service { "rabbitmq-server":
 	require => Package["rabbitmq-server"],
