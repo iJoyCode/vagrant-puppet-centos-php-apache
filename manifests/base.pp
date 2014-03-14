@@ -15,8 +15,8 @@ class { 'epel': }
 class { "memcached": memcached_port => '11211', maxconn => '2048', cachesize => '12' }
 
 # Miscellaneous packages.
-$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','upstart','libxml2-devel','libxslt-devel']
-package { $misc_packages: ensure => latest }
+$misc_packages = ['vim-enhanced','telnet','zip','unzip','git','upstart','libxml2-devel','libxslt-devel','rabbitmq-server']
+package { $misc_packages: ensure => latest,  require => Yumrepo['epel'] }
 class { "ntp": autoupdate => true }
 class { 'htop': }
 
@@ -38,7 +38,10 @@ python::pip { 'MySQL-python':
 class { 'phantomjs': }
 
 service { "rabbitmq-server":
-	require => Package["rabbitmq-server"],
+	require => [
+        Yumrepo['epel'],
+        Package["rabbitmq-server"]
+    ],
 	enable => true,
 }
 
