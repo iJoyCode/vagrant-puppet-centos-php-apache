@@ -1,0 +1,45 @@
+{
+  "license": "Apache 2.0",
+  "description": "Install and configure PHP for any of CLI, Apache httpd module and FastCGI.",
+  "name": "thias-php",
+  "source": "git://github.com/thias/puppet-php",
+  "author": "Matthias Saou",
+  "summary": "PHP module",
+  "dependencies": [
+
+  ],
+  "types": [
+
+  ],
+  "project_page": "https://github.com/thias/puppet-php",
+  "checksums": {
+    "tests/module/ini.pp": "ba5ad8ccc8bf36c6a4f513c8498262d8",
+    "tests/fpm/conf.pp": "8ab22d2e1e3821072e57c30734de70cd",
+    "ChangeLog": "d013ff7650dcc2394e7d2a48ff5ee709",
+    "manifests/ini.pp": "debdbf1fe503148d56d777ca5b417e22",
+    "Modulefile": "1b74462f3e075a1332594ce0f1e25404",
+    "manifests/fpm/daemon.pp": "713c14b742e07dd14c85c89414e4340b",
+    "tests/fpm/daemon.pp": "6804b102876223b40b3382668bf61434",
+    "templates/fpm/php-fpm.conf.erb": "9fe5a2a3844bf562099b60bcfe34b42c",
+    "README.md": "31f60faad4fc6b4916b86d598bf13e5f",
+    "manifests/module/ini.pp": "3996a7283780e7044dcc26ce3b321f6b",
+    "templates/php.ini-el6.erb": "ee1273eab5da52e4188408cdc68c673d",
+    "manifests/cli.pp": "90d7ed44c5a73616e3ba1e0ebab6ab4d",
+    "tests/ini.pp": "6ccaff70f981929198f22e398beca6ff",
+    "tests/cli.pp": "4acf74bcea023f76f2e9eb7acf38bbb3",
+    "manifests/params.pp": "d2354dfd6c624c2accaef32e01bfa6a9",
+    "tests/mod_php5.pp": "ff071f8ba0eb1a2b90e71a6de246df30",
+    "templates/module.ini.erb": "f6f67a64c7e3fef16cf12b3d034feb66",
+    "templates/fpm/pool.conf.erb": "a023063bf5ff5256296f6ff7c836dba6",
+    "manifests/module.pp": "2e8253bea120895d02ed58fbff578e8b",
+    "templates/httpd/php.conf.orig": "50015ff8bb23090aae4f8556987c5e40",
+    "templates/php.ini-el6.orig": "655c6c502c1367585d8a29935861cf7d",
+    "LICENSE": "99219472697a01561e7630d63aaecdc1",
+    "tests/module.pp": "461e492ab58e9777a3b09e7da5e69c54",
+    "templates/httpd/php.conf.erb": "67cdc86b03fefa7cfb2631c5adc7e94f",
+    "manifests/mod_php5.pp": "ca72872e766622350ff594bc316fded5",
+    "manifests/common.pp": "0831427668d1e19fe3ad1261e877b25f",
+    "manifests/fpm/conf.pp": "ee4144a150136a6386f339cca4febd44"
+  },
+  "version": "0.3.12"
+}

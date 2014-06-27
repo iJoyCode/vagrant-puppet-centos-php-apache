@@ -1,0 +1,26 @@
+{
+  "name": "akandels-phpunit",
+  "version": "1.0.0",
+  "author": "akandels",
+  "project_page": "https://github.com/andrew-kandels/puppet-phpunit",
+  "description": "Installs the PHPUnit PHAR package to an executable path for running unit tests for your PHP-based applications.",
+  "types": [
+
+  ],
+  "dependencies": [
+    {
+      "version_requirement": ">= 1.4.1",
+      "name": "maestrodev/wget"
+    }
+  ],
+  "checksums": {
+    "manifests/params.pp": "70992c90214cb6ea3ab9d22a26139ead",
+    "manifests/init.pp": "e5450f440718efdb19d766b00bf6ac71",
+    "LICENSE": "8fd5833a4f84749acb618c57ce69dd0f",
+    "Modulefile": "c5754d96b9dd137ebc82624d75017e22",
+    "README.md": "9bd22e8ac2294c72e30f20e98eb1b5f3"
+  },
+  "license": "BSD License, Version 2.0",
+  "source": "UNKNOWN",
+  "summary": "Installs the PHPUnit PHAR package to an executable path for running unit tests for your PHP-based applications."
+}

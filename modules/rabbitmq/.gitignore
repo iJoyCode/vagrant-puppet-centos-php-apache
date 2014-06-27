@@ -1,0 +1,9 @@
+.pkg
+Gemfile.lock
+vendor
+spec/fixtures
+.rspec_system
+.bundle
+.vagrant
+.*sw*
+metadata.json

@@ -1,0 +1,10 @@
+name          'arioch-redis'
+version       '0.0.7'
+author        'Tom De Vylder'
+license       'Apache License, Version 2.0'
+summary       'Redis module'
+description   'Redis module with cluster support'
+project_page  'http://arioch.github.io/puppet-redis/'
+
+dependency    'puppetlabs/stdlib', '>= 4.0.0'
+dependency    'puppetlabs/apt', '>= 1.4.0'

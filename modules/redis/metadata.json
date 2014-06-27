@@ -1,0 +1,40 @@
+{
+  "name": "arioch-redis",
+  "version": "0.0.7",
+  "source": "UNKNOWN",
+  "author": "Tom De Vylder",
+  "license": "Apache License, Version 2.0",
+  "summary": "Redis module",
+  "description": "Redis module with cluster support",
+  "project_page": "http://arioch.github.io/puppet-redis/",
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 4.0.0"
+    },
+    {
+      "name": "puppetlabs/apt",
+      "version_requirement": ">= 1.4.0"
+    }
+  ],
+  "types": [
+
+  ],
+  "checksums": {
+    "Gemfile": "c0514114217ed57cd72fd797a1e68cba",
+    "Gemfile.lock": "749d9ed9a9b45eb736112f75dba2b2ce",
+    "Modulefile": "a272429df7b289c4c2e6092476818e15",
+    "README.md": "7713994fccedc30a8f0a8324bea15328",
+    "Rakefile": "f066ceb93f901a7695e6c7644bb96783",
+    "manifests/config.pp": "c3c5590f2bdff72e7712459d9c1fa1a7",
+    "manifests/init.pp": "5b7828983bb05c32b73c940687ca09d2",
+    "manifests/install.pp": "ed2cb266101dbd5463ffdad8281e8c37",
+    "manifests/params.pp": "821532b4d22b9028324e75469ca5e673",
+    "manifests/preinstall.pp": "b7ba8e63a462d3b4e06d8103b7154b26",
+    "manifests/service.pp": "7f4e4bd9e6a8c0faee9399e4928a8d5c",
+    "spec/classes/redis_spec.rb": "9ea27bbe01cd1896ed5f9d82645d1216",
+    "spec/spec.opts": "e6d22f7dc7d9c1db75a1b58e490176c4",
+    "spec/spec_helper.rb": "9936deb4c4a14abcbe51e230488c9ef3",
+    "templates/redis.conf.erb": "f97e085605c592d2002dde0b9bc716a1"
+  }
+}
