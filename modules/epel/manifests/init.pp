@@ -86,14 +86,6 @@ class epel inherits epel::params {
       enabled 	=> 1,
       gpgcheck 	=> 0,
     }
-	
-	yumrepo { "CentALT":
-      baseurl	=> "http://centos.alt.ru/repository/centos/${::os_maj_version}/${::architecture}/",
-      descr 	=> "CentALT Packages for Enterprise Linux 6",
-      enabled 	=> 1,
-      gpgcheck 	=> 0,
-	  exclude 	=> "exclude=php* maria*",
-    }
 
     file { "/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-${::os_maj_version}":
       ensure => present,

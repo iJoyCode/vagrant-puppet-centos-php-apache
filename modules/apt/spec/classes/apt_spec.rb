@@ -1,5 +1,6 @@
 require 'spec_helper'
 describe 'apt', :type => :class do
+  let(:facts) { { :lsbdistid => 'Debian' } }
   let :default_params do
     {
       :disable_keys => :undef,
@@ -39,7 +40,7 @@ describe 'apt', :type => :class do
         end
       end
 
-      it { should include_class("apt::params") }
+      it { should contain_class("apt::params") }
 
       it {
         if param_hash[:purge_sources_list]
@@ -120,7 +121,11 @@ describe 'apt', :type => :class do
               'notify'  => "Exec[apt_update]"
             )
           else
-            should_not contain_file('configure_apt_proxy')
+            should contain_file('configure-apt-proxy').with(
+              'path'    => '/etc/apt/apt.conf.d/proxy',
+              'notify'  => 'Exec[apt_update]',
+              'ensure'  => 'absent'
+            )
           end
         }
       end

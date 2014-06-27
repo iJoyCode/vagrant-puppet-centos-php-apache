@@ -1,65 +1,19 @@
-# Class: nodejs::parms
+# = Class: nodejs::params
 #
-# Parameters:
+# This class defines default parameters used by the main module class nodejs.
+# Operating Systems differences in names and paths are addressed here.
 #
-# Actions:
+# == Variables:
 #
-# Requires:
+# Refer to nodejs class for the variables defined here.
 #
-# Usage:
+# == Usage:
+#
+# This class is not intended to be used directly.
+# It may be imported or inherited by other classes.
 #
 class nodejs::params {
-
-  case $::operatingsystem {
-    'Debian', 'Ubuntu': {
-      $node_pkg = 'nodejs'
-      $npm_pkg  = 'npm'
-      $dev_pkg  = 'nodejs-dev'
-    }
-
-    'SLES', 'OpenSuSE': {
-      $node_pkg = 'nodejs'
-      $npm_pkg  = 'npm'
-      $dev_pkg  = 'nodejs-devel'
-    }
-
-    'RedHat', 'CentOS', 'OEL', 'OracleLinux': {
-      $majdistrelease = $::lsbmajdistrelease ? {
-        ''      => regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1'),
-        default => $::lsbmajdistrelease,
-      }
-
-      case $majdistrelease {
-        '5': {
-          $gpgcheck = 0
-          $node_pkg = 'nodejs-compat-symlinks'
-        }
-        default: {
-          $gpgcheck = 1
-          $node_pkg = 'nodejs'
-        }
-      }
-      $npm_pkg  = 'npm'
-      $baseurl  = 'http://patches.fedorapeople.org/oldnode/stable/el$releasever/$basearch/'
-    }
-
-    'Fedora': {
-      $node_pkg = 'nodejs-compat-symlinks'
-      $npm_pkg  = 'npm'
-      $gpgcheck = 1
-      $baseurl  = 'http://patches.fedorapeople.org/oldnode/stable/f$releasever/$basearch/'
-    }
-
-    'Amazon': {
-      $node_pkg = 'nodejs-compat-symlinks'
-      $npm_pkg  = 'npm'
-      $gpgcheck = 1
-      $baseurl  = 'http://patches.fedorapeople.org/oldnode/stable/amzn1/$basearch/'
-    }
-
-    default: {
-      fail("Class nodejs does not support ${::operatingsystem}")
-    }
-  }
-
+  $install_dir = '/usr/local/node'
+  $target_dir  = '/usr/local/bin'
 }
+

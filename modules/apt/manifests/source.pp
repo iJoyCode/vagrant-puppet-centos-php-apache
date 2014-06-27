@@ -12,7 +12,8 @@ define apt::source(
   $key_server        = 'keyserver.ubuntu.com',
   $key_content       = false,
   $key_source        = false,
-  $pin               = false
+  $pin               = false,
+  $architecture      = undef
 ) {
 
   include apt::params
@@ -60,7 +61,10 @@ define apt::source(
       command     => "${provider} -y install ${required_packages}",
       logoutput   => 'on_failure',
       refreshonly => true,
+      tries       => 3,
+      try_sleep   => 1,
       subscribe   => File["${name}.list"],
+      before      => Exec['apt_update'],
     }
   }
 

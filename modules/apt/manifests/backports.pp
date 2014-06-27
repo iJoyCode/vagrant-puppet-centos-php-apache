@@ -29,7 +29,7 @@ class apt::backports(
 
   $release_real = downcase($release)
   $key = $::lsbdistid ? {
-    'debian' => '55BE302B',
+    'debian' => '46925553',
     'ubuntu' => '437D05B5',
   }
   $repos = $::lsbdistid ? {

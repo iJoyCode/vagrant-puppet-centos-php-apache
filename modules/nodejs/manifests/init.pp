@@ -1,118 +1,64 @@
-# Class: nodejs
+# = Class: nodejs
 #
-# Parameters:
+# == Parameters:
 #
-# Actions:
+# [*version*]
+#   The NodeJS version ('vX.Y.Z', 'latest' or 'stable').
 #
-# Requires:
+# [*target_dir*]
+#   Where to install the executables.
 #
-# Usage:
+# [*with_npm*]
+#   Whether to install NPM.
 #
-class nodejs(
-  $dev_package = false,
-  $manage_repo = false,
-  $proxy       = '',
-  $version     = 'present'
-) inherits nodejs::params {
-  #input validation
-  validate_bool($dev_package)
-  validate_bool($manage_repo)
+# [*make_install*]
+#   If false, will install from nodejs.org binary distributions.
+#
+# == Example:
+#
+#  include nodejs
+#
+#  class { 'nodejs':
+#    version  => 'v0.10.17'
+#  }
+#
+class nodejs (
+  $version      = 'stable',
+  $target_dir   = '/usr/local/bin',
+  $with_npm     = true,
+  $make_install = true,
+) {
 
-  case $::operatingsystem {
-    'Debian': {
-      if $manage_repo {
-        #only add apt source if we're managing the repo
-        include 'apt'
-        apt::source { 'sid':
-          location    => 'http://ftp.us.debian.org/debian/',
-          release     => 'sid',
-          repos       => 'main',
-          pin         => 100,
-          include_src => false,
-          before      => Anchor['nodejs::repo'],
-        }
-      }
-    }
-
-    'Ubuntu': {
-      if $manage_repo {
-        # Only add apt source if we're managing the repo
-        include 'apt'
-        # Only use PPA when necessary.
-        apt::ppa { 'ppa:chris-lea/node.js':
-          before => Anchor['nodejs::repo'],
-        }
-
-        apt::ppa { 'ppa:chris-lea/node.js-devel':
-          before => Anchor['nodejs::repo'],
-        }
-      }
-    }
-
-    'Fedora', 'RedHat', 'CentOS', 'OEL', 'OracleLinux', 'Amazon': {
-      if $manage_repo {
-        package { 'nodejs-stable-release':
-          ensure => absent,
-          before => Yumrepo['nodejs-stable'],
-        }
-        yumrepo { 'nodejs-stable':
-          descr    => 'Stable releases of Node.js',
-          baseurl  => $nodejs::params::baseurl,
-          enabled  => 1,
-          gpgcheck => $nodejs::params::gpgcheck,
-          gpgkey   => 'http://patches.fedorapeople.org/oldnode/stable/RPM-GPG-KEY-tchol',
-          before   => Anchor['nodejs::repo'],
-        }
-        file {'nodejs_repofile':
-          ensure  => 'file',
-          before  => Anchor['nodejs::repo'],
-          group   => 'root',
-          mode    => '0444',
-          owner   => 'root',
-          path    => '/etc/yum.repos.d/nodejs-stable.repo',
-          require => Yumrepo['nodejs-stable']
-        }
-      }
-    }
-
-    default: {
-      fail("Class nodejs does not support ${::operatingsystem}")
-    }
+  nodejs::install { "nodejs-${version}":
+    version       => $version,
+    target_dir    => $target_dir,
+    with_npm      => $with_npm,
+    make_install  => $make_install,
   }
 
-  # anchor resource provides a consistent dependency for prereq.
-  anchor { 'nodejs::repo': }
-
-  package { 'nodejs':
-    name    => $nodejs::params::node_pkg,
-    ensure  => $version,
-    require => Anchor['nodejs::repo']
+  $node_version = $version ? {
+    undef     => $::nodejs_stable_version,
+    'stable'  => $::nodejs_stable_version,
+    'latest'  => $::nodejs_latest_version,
+    default   => $version
   }
 
-  if $::operatingsystem != 'ubuntu' {
-    # The PPA we are using on Ubuntu includes NPM in the nodejs package, hence
-    # we must not install it separately
-    package { 'npm':
-      name    => $nodejs::params::npm_pkg,
-      ensure  => present,
-      require => Anchor['nodejs::repo']
-    }
+  $nodejs_version_path = "/usr/local/node/node-${$node_version}"
+  $nodejs_default_path = '/usr/local/node/node-default'
+
+  file { $nodejs_default_path:
+    ensure  => link,
+    target  => $nodejs_version_path,
+    require => Nodejs::Install["nodejs-${version}"],
   }
 
-  if $proxy {
-    exec { 'npm_proxy':
-      command => "npm config set proxy ${proxy}",
-      path    => $::path,
-      require => Package['npm'],
-    }
-  }
-
-  if $dev_package and $nodejs::params::dev_pkg {
-    package { 'nodejs-dev':
-      name    => $nodejs::params::dev_pkg,
-      ensure  => $version,
-      require => Anchor['nodejs::repo']
-    }
+  file { '/etc/profile.d/nodejs.sh':
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template("${module_name}/nodejs.sh.erb"),
+    require => File[$nodejs_default_path],
   }
 
 }

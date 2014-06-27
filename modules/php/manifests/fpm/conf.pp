@@ -16,66 +16,74 @@
 #  }
 #
 define php::fpm::conf (
-    $ensure = 'present',
-    $listen = '127.0.0.1:9000',
-    # Puppet does not allow dots in variable names
-    $listen_backlog = '-1',
-    $listen_allowed_clients = '127.0.0.1',
-    $listen_owner = false,
-    $listen_group = false,
-    $listen_mode = false,
-    $user = 'apache',
-    $group = false,
-    $pm = 'dynamic',
-    $pm_max_children = '50',
-    $pm_start_servers = '5',
-    $pm_min_spare_servers = '5',
-    $pm_max_spare_servers = '35',
-    $pm_max_requests = '0',
-    $pm_status_path = false,
-    $ping_path = false,
-    $ping_response = 'pong',
-    $request_terminate_timeout = '0',
-    $request_slowlog_timeout = '0',
-    $slowlog = "/var/log/php-fpm/${name}-slow.log",
-    $rlimit_files = false,
-    $rlimit_core = false,
-    $chroot = false,
-    $chdir = false,
-    $catch_workers_output = 'no',
-    $env = [],
-    $env_value = {},
-    $php_value = {},
-    $php_flag = {},
-    $php_admin_value = {},
-    $php_admin_flag = {},
-    $php_directives = [],
-    $error_log = true
+  $ensure                    = 'present',
+  $user                      = 'apache',
+  $group                     = undef,
+  $listen                    = '127.0.0.1:9000',
+  # Puppet does not allow dots in variable names
+  $listen_backlog            = '-1',
+  $listen_owner              = undef,
+  $listen_group              = undef,
+  $listen_mode               = undef,
+  $listen_allowed_clients    = '127.0.0.1',
+  $process_priority          = undef,
+  $pm                        = 'dynamic',
+  $pm_max_children           = '50',
+  $pm_start_servers          = '5',
+  $pm_min_spare_servers      = '5',
+  $pm_max_spare_servers      = '35',
+  $pm_process_idle_timeout   = undef,
+  $pm_max_requests           = '0',
+  $pm_status_path            = undef,
+  $ping_path                 = undef,
+  $ping_response             = 'pong',
+  $slowlog                   = "/var/log/php-fpm/${name}-slow.log",
+  $request_slowlog_timeout   = undef,
+  $request_terminate_timeout = undef,
+  $rlimit_files              = undef,
+  $rlimit_core               = undef,
+  $chroot                    = undef,
+  $chdir                     = undef,
+  $catch_workers_output      = 'no',
+  $clear_env                 = undef,
+  $security_limit_extensions = undef,
+  $env                       = [],
+  $env_value                 = {},
+  $php_value                 = {},
+  $php_flag                  = {},
+  $php_admin_value           = {},
+  $php_admin_flag            = {},
+  $php_directives            = [],
+  $error_log                 = true,
 ) {
 
-    $pool = $title
+  include '::php::params'
 
-    # Hack-ish to default to user for group too
-    $group_final = $group ? { false => $user, default => $group }
+  $pool = $title
 
-    if ( $ensure == 'absent' ) {
+  # Hack-ish to default to user for group too
+  $group_final = $group ? { undef => $user, default => $group }
 
-        file { "/etc/php-fpm.d/${pool}.conf":
-            notify => Service['php-fpm'],
-            ensure => absent,
-        }
+  if ( $ensure == 'absent' ) {
 
-    } else {
-
-        file { "/etc/php-fpm.d/${pool}.conf":
-            notify  => Service['php-fpm'],
-            content => template('php/fpm/pool.conf.erb'),
-            owner   => 'root',
-            group   => 'root',
-            mode    => '0644',
-        }
-
+    file { "${php::params::fpm_pool_dir}/${pool}.conf":
+      notify  => Service[$php::params::fpm_service_name],
+      ensure  => absent,
+      require => Package[$php::params::fpm_package_name],
     }
+
+  } else {
+
+    file { "${php::params::fpm_pool_dir}/${pool}.conf":
+      notify  => Service[$php::params::fpm_service_name],
+      content => template('php/fpm/pool.conf.erb'),
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      require => Package[$php::params::fpm_package_name],
+    }
+
+  }
 
 }
 

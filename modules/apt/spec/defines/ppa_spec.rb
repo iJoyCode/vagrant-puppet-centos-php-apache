@@ -1,17 +1,28 @@
 require 'spec_helper'
 describe 'apt::ppa', :type => :define do
-  [ { :lsbdistrelease => '11.04',
+  [
+    {
+      :lsbdistrelease  => '11.04',
       :lsbdistcodename => 'natty',
-      :package => 'python-software-properties'},
-    { :lsbdistrelease => '12.10',
+      :operatingsystem => 'Ubuntu',
+      :lsbdistid       => 'Ubuntu',
+      :package         => 'python-software-properties'
+    },
+    {
+      :lsbdistrelease  => '12.10',
       :lsbdistcodename => 'quantal',
-      :package => 'software-properties-common'},
+      :operatingsystem => 'Ubuntu',
+      :lsbdistid       => 'Ubuntu',
+      :package         => 'software-properties-common'
+    },
   ].each do |platform|
     context "on #{platform[:lsbdistcodename]}" do
       let :facts do
         {
-          :lsbdistrelease => platform[:lsbdistrelease],
+          :lsbdistrelease  => platform[:lsbdistrelease],
           :lsbdistcodename => platform[:lsbdistcodename],
+          :operatingsystem => platform[:operatingsystem],
+          :lsbdistid       => platform[:lsbdistid],
         }
       end
       let :release do
@@ -19,6 +30,9 @@ describe 'apt::ppa', :type => :define do
       end
       let :package do
         "#{platform[:package]}"
+      end
+      let :options do
+        "-y"
       end
       ['ppa:dans_ppa', 'dans_ppa','ppa:dans-daily/ubuntu'].each do |t|
         describe "with title #{t}" do
@@ -41,9 +55,9 @@ describe 'apt::ppa', :type => :define do
           }
 
           it { should contain_exec("add-apt-repository-#{t}").with(
-            'command' => "/usr/bin/add-apt-repository #{t}",
-            'creates' => "/etc/apt/sources.list.d/#{filename}",
-            'require' => ["File[/etc/apt/sources.list.d]", "Package[#{package}]"],
+            'command' => "/usr/bin/add-apt-repository #{options} #{t}",
+            'unless'  => "/usr/bin/test -s /etc/apt/sources.list.d/#{filename}",
+            'require' => ["File[sources.list.d]", "Package[#{package}]"],
             'notify'  => "Exec[apt_update]"
             )
           }
@@ -55,10 +69,58 @@ describe 'apt::ppa', :type => :define do
           }
         end
       end
+      describe 'without a proxy defined' do
+        let :title do
+          'rspec_ppa'
+        end
+        let :pre_condition do
+          'class { "apt":
+             proxy_host => false
+          }'
+        end
+        let :filename do
+          "#{title}-#{release}.list"
+        end
+
+        it { should contain_exec("add-apt-repository-#{title}").with(
+          'environment' => [],
+          'command'     => "/usr/bin/add-apt-repository #{options} #{title}",
+          'unless'      => "/usr/bin/test -s /etc/apt/sources.list.d/#{filename}",
+          'require'     => ["File[sources.list.d]", "Package[#{package}]"],
+          'notify'      => "Exec[apt_update]"
+          )
+        }
+      end
+
+      describe 'behind a proxy' do
+        let :title do
+          'rspec_ppa'
+        end
+        let :pre_condition do
+          'class { "apt":
+            proxy_host => "user:pass@proxy",
+          }'
+        end
+          let :filename do
+            "#{title}-#{release}.list"
+          end
+
+        it { should contain_exec("add-apt-repository-#{title}").with(
+          'environment' => [
+            "http_proxy=http://user:pass@proxy:8080",
+            "https_proxy=http://user:pass@proxy:8080",
+          ],
+          'command'     => "/usr/bin/add-apt-repository #{options} #{title}",
+          'unless'      => "/usr/bin/test -s /etc/apt/sources.list.d/#{filename}",
+          'require'     => ["File[sources.list.d]", "Package[#{package}]"],
+          'notify'      => "Exec[apt_update]"
+          )
+        }
+      end
     end
   end
 
-  [ { :lsbdistcodename => 'natty', 
+  [ { :lsbdistcodename => 'natty',
       :package => 'python-software-properties' },
     { :lsbdistcodename => 'quantal',
       :package => 'software-properties-common'},
@@ -70,7 +132,9 @@ describe 'apt::ppa', :type => :define do
            'package { "#{platform[:package]}": }->Apt::Ppa["ppa"]'
         end
         let :facts do
-          {:lsbdistcodename => '#{platform[:lsbdistcodename]}'}
+          {:lsbdistcodename => '#{platform[:lsbdistcodename]}',
+           :operatingsystem => 'Ubuntu',
+           :lsbdistid => 'Ubuntu'}
         end
         let(:title) { "ppa" }
         let(:release) { "#{platform[:lsbdistcodename]}" }

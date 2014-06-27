@@ -1,19 +1,15 @@
-vagrant-puppet-centos-php-apache
-=========================
-
 Vagrant VM with CentOS (SandBox for PHP Development)
+* Updated for latest Vagrant (1.6.x)
 
 Installed:
-- Apache
-- PHP 5.5.x (last stable) with xdebug 
-- PHP Extensions (pear, mysql, pgsql, mbstring, xml, gd, tidy, pecl-apc, pecl-memcache, pecl-imagick)
-- MySQL 5.5 (last stable)
-- PHPMyAdmin
-- Redis (last stable)
 - iptables
-- openjdk
+- Apache
+- PHP 5.5.x (including imagick, ampq and other modules)
+- MySQL 5.5
+- Redis
+- RabbitMQ
+- PHPMyAdmin (without vhost)
+- MongoDb
+- Pipe Viewer
+- NodeJS (Nodemon, Grunt)
 - PHPUnit
-- Memcache
-- PostgreSQL
-- Node.js (npm, nodemon, grunt.js)
-- other (git, zip, telnet ...)

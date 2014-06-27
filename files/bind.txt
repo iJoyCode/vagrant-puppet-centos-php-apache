@@ -1,3 +1,0 @@
-@ 		IN 		SOA 	ns.domain.com. hostmaster.domain.com. ( 1 3h 1h 1w 1d )
-  		IN 		NS 		centos63.local
-* 		IN 		A 		192.168.33.10

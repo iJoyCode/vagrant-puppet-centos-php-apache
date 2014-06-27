@@ -18,6 +18,14 @@
 # It also copies out the concatfragments.sh file to ${concatdir}/bin
 #
 class concat::setup {
+  case $::osfamily {
+    'windows': {
+      fail("Unsupported osfamily: ${osfamily}")
+    }
+    default: {
+      # Should work otherwise
+    }
+  }
   $id = $::id
   $root_group = $id ? {
     root    => 0,
@@ -27,7 +35,7 @@ class concat::setup {
   if $::concat_basedir {
     $concatdir = $::concat_basedir
   } else {
-    fail ("\$concat_basedir not defined. Try running again with pluginsync=true on the [master] section of your node's '/etc/puppet/puppet.conf'.")
+    fail ("\$concat_basedir not defined. Try running again with pluginsync=true on the [master] and/or [main] section of your node's '/etc/puppet/puppet.conf'.")
   }
 
   $majorversion = regsubst($::puppetversion, '^[0-9]+[.]([0-9]+)[.][0-9]+$', '\1')
@@ -52,4 +60,8 @@ class concat::setup {
   '/usr/local/bin/concatfragments.sh':
     ensure => absent;
   }
+
+  # Ensure we run setup first.
+  Class['concat::setup'] -> Concat::Fragment<| |>
+
 }

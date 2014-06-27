@@ -8,12 +8,21 @@
 #  php::module { 'odbc': ensure => absent }
 #  php::module { 'pecl-apc': }
 #
-define php::module ( $ensure = installed ) {
-    package { "php-${title}":
-        ensure => $ensure,
-        require => [
-          Yumrepo["remi-test"],
-        ],
-    }
+define php::module (
+  $ensure = installed,
+) {
+
+  include '::php::params'
+
+  # Manage the incorrect named php-apc package under Debians
+  if ($title == 'apc') {
+    $package = $::php::params::php_apc_package_name
+  } else { 
+    $package = "${::php::params::php_package_name}-${title}"
+  }
+  
+  package { $package:
+    ensure => $ensure,
+  }
 }
 
