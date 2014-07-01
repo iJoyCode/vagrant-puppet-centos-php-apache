@@ -113,6 +113,11 @@ package { "pv":
     ensure => "installed",
 }
 
+# Git
+package { "git":
+    ensure => "installed",
+}
+
 # PHPUnit
 class { 'phpunit': }
 
