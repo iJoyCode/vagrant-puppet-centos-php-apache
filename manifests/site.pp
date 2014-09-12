@@ -64,6 +64,7 @@ class { 'iptables': }
 class { 'apache':
 	sendfile		=> 'off',
 }
+apache::mod { 'headers': }
 apache::vhost { 'centos.local':
     priority        => '1',
     port            => '80',

@@ -1,40 +1,37 @@
 {
-  "name": "arioch-redis",
-  "version": "0.0.7",
-  "source": "UNKNOWN",
-  "author": "Tom De Vylder",
+  "name": "fsalum-redis",
+  "version": "1.0.0",
+  "source": "git://github.com/fsalum/puppet-redis.git",
+  "author": "Felipe Salum",
   "license": "Apache License, Version 2.0",
-  "summary": "Redis module",
-  "description": "Redis module with cluster support",
-  "project_page": "http://arioch.github.io/puppet-redis/",
+  "summary": "Puppet module for Redis Server",
+  "description": "Module to install and configure a Redis server",
+  "project_page": "https://github.com/fsalum/puppet-redis",
   "dependencies": [
     {
-      "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 4.0.0"
-    },
-    {
-      "name": "puppetlabs/apt",
-      "version_requirement": ">= 1.4.0"
+      "name": "thias/sysctl",
+      "version_requirement": ">= 0.3.0"
     }
   ],
   "types": [
 
   ],
   "checksums": {
-    "Gemfile": "c0514114217ed57cd72fd797a1e68cba",
-    "Gemfile.lock": "749d9ed9a9b45eb736112f75dba2b2ce",
-    "Modulefile": "a272429df7b289c4c2e6092476818e15",
-    "README.md": "7713994fccedc30a8f0a8324bea15328",
-    "Rakefile": "f066ceb93f901a7695e6c7644bb96783",
-    "manifests/config.pp": "c3c5590f2bdff72e7712459d9c1fa1a7",
-    "manifests/init.pp": "5b7828983bb05c32b73c940687ca09d2",
-    "manifests/install.pp": "ed2cb266101dbd5463ffdad8281e8c37",
-    "manifests/params.pp": "821532b4d22b9028324e75469ca5e673",
-    "manifests/preinstall.pp": "b7ba8e63a462d3b4e06d8103b7154b26",
-    "manifests/service.pp": "7f4e4bd9e6a8c0faee9399e4928a8d5c",
-    "spec/classes/redis_spec.rb": "9ea27bbe01cd1896ed5f9d82645d1216",
-    "spec/spec.opts": "e6d22f7dc7d9c1db75a1b58e490176c4",
-    "spec/spec_helper.rb": "9936deb4c4a14abcbe51e230488c9ef3",
-    "templates/redis.conf.erb": "f97e085605c592d2002dde0b9bc716a1"
+    "CHANGELOG": "09eec7df573108283f5cf5d542462048",
+    "Gemfile": "7c7684e8c8d675f1061e40a3e1d9236d",
+    "Gemfile.lock": "9e2113cbe27b6b19ce0a24cbab0148d3",
+    "LICENSE": "1b27ef6006a261242c6c077d3ac2f13f",
+    "Modulefile": "24fe7b1a57a5bc9f7a4d33d8097b8963",
+    "README.md": "1d1fc87ab3eaeef4df601c8de05fa8ce",
+    "Rakefile": "25325f7a133aff637f3bea5e272bce74",
+    "Vagrantfile": "cc4f02cf6c571b166d1ea6c961aa7d06",
+    "lib/facter/redis_version.rb": "edd48d87c327452aa895b83b528d0696",
+    "manifests/init.pp": "b9296ebda81aa6a72717fd334ae54a28",
+    "manifests/params.pp": "09673263bc33b10bd38e28f6c6ba5a06",
+    "spec/spec_helper.rb": "a55d1e6483344f8ec6963fcb2c220372",
+    "templates/redis.conf.erb": "a7f72caa28bd99d7d3761ca658ae6748",
+    "templates/redis.logrotate.erb": "c1d0b11eeb8252e6be3f3e0cfe269414",
+    "tests/Puppetfile": "5580d0db50059fdc3d5ce7fef4198251",
+    "tests/init.pp": "4f1bf99f7776bf4ae3bc304153173142"
   }
 }

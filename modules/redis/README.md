@@ -1,60 +1,80 @@
-# Puppet Redis
+Redis Module for Puppet
+=======================
+[![Build Status](https://secure.travis-ci.org/fsalum/puppet-redis.png)](http://travis-ci.org/fsalum/puppet-redis)
 
-## Build status
+This module installs and manages a Redis server. All redis.conf options are
+accepted in the parameterized class.
 
-[![Build Status](https://travis-ci.org/arioch/puppet-redis.png?branch=master)](https://travis-ci.org/arioch/puppet-redis)
+Important
+---------
 
-## Example usage
+If you are upgrading this module from 0.x to 1.0+, please test it carefully 
+outside production as it is not fully backwards compatible.
 
-### Standalone
+Some class parameters were added, removed or had their default values changed.
 
-    class { 'redis':;
-    }
+The redis.conf template has been completely rewritten to support Redis 2.2+ to 2.8+.
 
-### Master node
+Operating System
+----------------
 
-    class { 'redis':
-      bind        => '10.0.1.1';
-      #masterauth  => 'secret';
-    }
+Tested on CentOS 6.5, Ubuntu Saucy/Trusty/Precise, Debian 7.4  
+redis.conf options compatible with Redis 2.2, 2.4, 2.6, 2.8  
 
-### Slave node
+Quick Start
+-----------
 
-    class { 'redis':
-      bind        => '10.0.1.2',
-      slaveof     => '10.0.1.1 6379';
-      #masterauth  => 'secret';
-    }
+Use the default parameters:
 
-### Manage repositories
+    class { 'redis': }
 
-Disabled by default but if you really want the module to manage the required
-repositories you can use this snippet:
-
-    class { 'redis':
-      manage_repo => true,
-    }
-
-On Ubuntu, "chris-lea/redis-server" ppa repo will be added. You can change it by using ppa_repo parameter: 
+To change the port and listening network interface:
 
     class { 'redis':
-      manage_repo => true,
-      ppa_repo    => 'ppa:rwky/redis',
+      conf_port => '6379',
+      conf_bind => '0.0.0.0',
     }
 
-## Unit testing
+Parameters
+----------
 
-Plain RSpec:
+Check the [init.pp](https://github.com/fsalum/puppet-redis/blob/master/manifests/init.pp) file for a complete list of parameters accepted.
 
-    $ rake spec
+* custom sysctl
 
-Using bundle:
+To enable and set important Linux kernel sysctl parameters as described in the [Redis Admin Guide](http://redis.io/topics/admin) - use the following configuration option:
 
-    $ bundle exec rake spec
+    class { 'redis':
+      system_sysctl => true
+    }
 
-Test against a specific Puppet or Facter version:
+By default, this sysctl parameter will not be enabled. Furthermore, you will need the sysctl module defined in the [Modulefile](https://github.com/fsalum/puppet-redis/blob/master/Modulefile) file.
 
-    $ PUPPET_VERSION=3.2.1  bundle update && bundle exec rake spec
-    $ PUPPET_VERSION=2.7.19 bundle update && bundle exec rake spec
-    $ FACTER_VERSION=1.6.8  bundle update && bundle exec rake spec
+* service restart
 
+If you need to execute a controlled restart of redis after changes due master/slave relationships to avoid that both are restarted at the same time use the parameter below.
+
+    class { 'redis':
+      service_restart => false
+    }
+
+By default service restart is true.
+
+Copyright and License
+---------------------
+
+Copyright (C) 2012 Felipe Salum
+
+Felipe Salum can be contacted at: fsalum@gmail.com
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.

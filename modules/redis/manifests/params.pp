@@ -1,95 +1,37 @@
-# == Class: redis::params
+# Class: redis::params
 #
-# This class provides a number of parameters.
+# This class configures parameters for the puppet-redis module.
+#
+# Parameters:
+#
+# Actions:
+#
+# Requires:
+#
+# Sample Usage:
 #
 class redis::params {
-  # Generic
-  $manage_repo = false
-
-  # redis.conf.erb
-  $activerehashing             = true
-  $appendfsync                 = 'everysec'
-  $appendonly                  = false
-  $auto_aof_rewrite_min_size   = '64min'
-  $auto_aof_rewrite_percentage = 100
-  $bind                        = $::ipaddress
-  $daemonize                   = true
-  $databases                   = 16
-  $dbfilename                  = 'dump.rdb'
-  $hash_max_ziplist_entries    = 512
-  $hash_max_ziplist_value      = 64
-  $list_max_ziplist_entries    = 512
-  $list_max_ziplist_value      = 64
-  $log_dir                     = '/var/log/redis'
-  $log_file                    = '/var/log/redis/redis.log'
-  $log_level                   = 'notice'
-  $maxclients                  = 10000
-  $maxmemory                   = undef
-  $maxmemory_policy            = undef
-  $maxmemory_samples           = undef
-  $no_appendfsync_on_rewrite   = false
-  $pid_file                    = '/var/run/redis/redis-server.pid'
-  $port                        = 6379
-  $rdbcompression              = true
-  $requirepass                 = undef
-  $set_max_intset_entries      = 512
-  $slowlog_log_slower_than     = 10000
-  $slowlog_max_len             = 1024
-  $timeout                     = 0
-  $ulimit                      = 65536
-  $workdir                     = '/var/lib/redis/'
-  $zset_max_ziplist_entries    = 128
-  $zset_max_ziplist_value      = 64
-
-  # redis.conf.erb - replication
-  $masterauth             = undef
-  $repl_ping_slave_period = 10
-  $repl_timeout           = 60
-  $slave_read_only        = true
-  $slave_serve_stale_data = true
-  $slaveof                = undef
 
   case $::osfamily {
-    'Debian': {
-      $config_dir         = '/etc/redis'
-      $config_dir_mode    = '0755'
-      $config_file        = '/etc/redis/redis.conf'
-      $config_file_mode   = '0644'
-      $config_group       = 'root'
-      $config_owner       = 'root'
-      $package_ensure     = 'present'
-      $package_name       = 'redis-server'
-      $service_enable     = true
-      $service_ensure     = 'running'
-      $service_group      = 'redis'
-      $service_hasrestart = true
-      $service_hasstatus  = false
-      $service_name       = 'redis-server'
-      $service_user       = 'redis'
-      $ppa_repo           = 'ppa:chris-lea/redis-server'
+    'redhat': {
+      $package        = 'redis'
+      $service        = 'redis'
+      $conf           = '/etc/redis.conf'
+      $conf_logrotate = '/etc/logrotate.d/redis'
+      $pidfile        = '/var/run/redis/redis.pid'
+      $logfile        = '/var/log/redis/redis.log'
     }
-
-    'RedHat': {
-      $config_dir         = '/etc/redis'
-      $config_dir_mode    = '0755'
-      $config_file        = '/etc/redis.conf'
-      $config_file_mode   = '0644'
-      $config_group       = 'root'
-      $config_owner       = 'root'
-      $package_ensure     = 'present'
-      $package_name       = 'redis'
-      $service_enable     = true
-      $service_ensure     = 'running'
-      $service_group      = 'redis'
-      $service_hasrestart = true
-      $service_hasstatus  = true
-      $service_name       = 'redis'
-      $service_user       = 'redis'
+    'debian': {
+      $package        = 'redis-server'
+      $service        = 'redis-server'
+      $conf           = '/etc/redis/redis.conf'
+      $conf_logrotate = '/etc/logrotate.d/redis-server'
+      $pidfile        = '/var/run/redis/redis-server.pid'
+      $logfile        = '/var/log/redis/redis-server.log'
     }
-
     default: {
-      fail "Operating system ${::operatingsystem} is not supported yet."
+      fail("Unsupported osfamily: ${::osfamily}, module ${module_name} only support osfamily RedHat and Debian")
     }
   }
-}
 
+}
