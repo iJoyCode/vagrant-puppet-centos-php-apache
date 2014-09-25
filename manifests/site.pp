@@ -119,6 +119,11 @@ package { "git":
     ensure => "installed",
 }
 
+# ImageMagick
+package { "ImageMagick":
+    ensure => "installed",
+}
+
 # PHPUnit
 class { 'phpunit': }
 
