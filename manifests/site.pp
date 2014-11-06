@@ -25,6 +25,9 @@ package { 'grunt-cli':
 package { 'nodemon':
   provider => npm,
 }
+package { 'jshint':
+  provider => npm,
+}
 
 # Edit local /etc/hosts files to resolve some hostnames used on your application.
 host { 'localhost.localdomain':
