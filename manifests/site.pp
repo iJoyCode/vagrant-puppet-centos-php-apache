@@ -132,3 +132,9 @@ class { 'phpunit': }
 
 # PHPMyAdmin
 class { 'phpmyadmin': }
+
+# Pear
+class { "pear": }
+
+# PHP CodeSniffer
+pear::package { "PHP_CodeSniffer": }
