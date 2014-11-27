@@ -89,7 +89,7 @@ php::ini {
 }
 include php::cli
 include php::mod_php5
-php::module { [ 'devel', 'pear', 'pgsql', 'intl', 'mbstring', 'xml', 'gd', 'opcache', 'tidy', 'pecl-memcache', 'pecl-imagick', 'pecl-redis', 'pecl-amqp']: }
+php::module { [ 'devel', 'pear', 'pgsql', 'intl', 'mbstring', 'xml', 'gd', 'opcache', 'tidy', 'pecl-memcache', 'pecl-imagick', 'pecl-redis', 'pecl-amqp', 'pecl-event']: }
 
 # MySQL
 class { '::mysql::server':
@@ -124,6 +124,11 @@ package { "git":
 
 # ImageMagick
 package { "ImageMagick":
+    ensure => "installed",
+}
+
+# LibEvent
+package { "libevent-last-devel":
     ensure => "installed",
 }
 
