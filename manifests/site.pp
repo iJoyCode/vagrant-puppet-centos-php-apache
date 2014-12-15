@@ -66,6 +66,7 @@ class { 'iptables': }
 # Apache
 class { 'apache':
 	sendfile		=> 'off',
+	purge_configs => false,
 }
 apache::mod { 'headers': }
 apache::vhost { 'centos.local':
